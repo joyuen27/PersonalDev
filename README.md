@@ -1,6 +1,9 @@
-# Joe Yuen's Developer Journey
+> **Disclaimer**
+> This README was drafted with help from AI and will evolve as I add my own notes, projects, and lessons learned.
 
-Welcome to my developer journey. This space is where I document what I am learning, building, debugging, and exploring across embedded software, firmware, hardware, and edge acceleration.
+# Joe Yuen's Development Notes
+
+This space is where I document what I am learning, building, debugging, and exploring across embedded software, firmware, hardware, and edge acceleration.
 
 I use this repository as a working notebook: part lab log, part reference shelf, and part record of the projects that help me turn ideas into reliable systems.
 
@@ -49,14 +52,6 @@ A place for documenting embedded topics as I learn them.
 - Hardware debugging
 - Timing, memory, and power constraints
 
-## Notes To Future Me
-
-- Measure before optimizing.
-- Read the datasheet twice.
-- Keep experiments small enough to understand.
-- Write down the bug while it is still fresh.
-- Prefer clear, repeatable tests over guesses.
-
 ## Repository Map
 
 ```text
@@ -70,7 +65,3 @@ A place for documenting embedded topics as I learn them.
 ## Current Focus
 
 Right now, I am building up stronger foundations in CUDA and edge acceleration while continuing to grow toward embedded software, firmware, and hardware-focused development.
-
-## Disclaimer
-
-This README was drafted with help from AI and will evolve as I add my own notes, projects, and lessons learned.

@@ -1,3 +1,6 @@
+> **Disclaimer**
+> This README was drafted with help from AI and should be updated as the project evolves.
+
 # CUDA Practice
 
 This folder tracks my CUDA learning and practice so far.
@@ -26,7 +29,3 @@ The matrix multiplication code is close to a first working CUDA example, but the
 - Add CUDA error checks after memory allocation, memory copies, kernel launch, and synchronization.
 - Compile and run the matrix multiplication example with `nvcc`.
 - Keep improving the notes as I learn more about CUDA threads, blocks, grids, memory, and performance.
-
-## Disclaimer
-
-This README was drafted with help from AI and should be updated as the project evolves.
