@@ -1,7 +1,7 @@
 > **Disclaimer**
 > This README was drafted with help from AI and will evolve as I add my own notes, projects, and lessons learned.
 
-# Joe Yuen's Development Notes
+# Development Notes
 
 This space is where I document what I am learning, building, debugging, and exploring across embedded software, firmware, hardware, and edge acceleration.
 
