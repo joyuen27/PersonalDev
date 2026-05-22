@@ -65,7 +65,7 @@ std::vector<float> mat_mul(std::vector<float>& m1, std::vector<float>& m2, uint3
     /* Call Kernel */
     uint16_t num_threads = 256; //Should always be some multiple of 32 for warp efficiency
     uint16_t num_blocks = (row_1 * col_2 + num_threads - 1) / num_threads;
-    k_mat_mul<<<num_blocks, num_threads>>>(dev_m1, dev_m2, dev_m3, row_1, col_2, col_1);
+    k_mat_mul_base<<<num_blocks, num_threads>>>(dev_m1, dev_m2, dev_m3, row_1, col_2, col_1);
 
     /* Wait for Sync */
     cudaDeviceSynchronize();
