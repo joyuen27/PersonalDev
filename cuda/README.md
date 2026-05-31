@@ -1,5 +1,6 @@
 > **Disclaimer**
 > This README was drafted with help from AI and should be updated as the project evolves.
+> The CUDA notes were translated into text with AI from my handwritten notes, which are a little messy. I plan to upload the original handwritten notes later too.
 
 # CUDA Practice
 
@@ -17,4 +18,15 @@ This folder tracks my CUDA learning and practice so far.
 
 - `mat_mult/mat_mul_base.cu` - baseline matrix multiplication implementation.
 - `mat_mult/prac_dev.cu` - practice copy of the matrix multiplication implementation.
-- `notes/cuda_notes.pdf` - 4-page CUDA programming notes PDF.
+- `notes/cuda_notes.pdf` - 4-page CUDA programming notes PDF, translated into text with AI from my handwritten notes.
+
+## Current status
+
+The matrix multiplication code is close to a first working CUDA example, but there is one cleanup needed before compiling: the kernel is named `k_mat_mul_base`, while the launch currently calls `k_mat_mul`.
+
+## Next steps
+
+- Fix the kernel name mismatch.
+- Add CUDA error checks after memory allocation, memory copies, kernel launch, and synchronization.
+- Compile and run the matrix multiplication example with `nvcc`.
+- Keep improving the notes as I learn more about CUDA threads, blocks, grids, memory, and performance.
