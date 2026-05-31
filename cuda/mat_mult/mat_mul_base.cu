@@ -29,8 +29,8 @@ __global__ void k_mat_mul_base(float* dev_m1, float* dev_m2, float* dev_m3, uint
     dev_m3[idx] = sum;
 }
 
-/* Returns pointer to result array */
-std::vector<float> mat_mul(std::vector<float>& m1, std::vector<float>& m2, uint32_t row_1, uint32_t col_2)
+/* Returns result array */
+std::vector<float> mat_mul_base(std::vector<float>& m1, std::vector<float>& m2, uint32_t row_1, uint32_t col_2)
 {
 
     // Get dimensions
@@ -98,7 +98,7 @@ int main() {
       for (int c = 0; c < N; c++)
           m2[r * N + c] = (float)c;
 
-  std::vector<float> result = mat_mul(m1, m2, N, N);
+  std::vector<float> result = mat_mul_base(m1, m2, N, N);
 
   if (result.empty()) {
       std::cout << "Matrix multiply failed" << std::endl;
