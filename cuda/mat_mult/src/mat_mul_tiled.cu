@@ -5,7 +5,7 @@
 
 __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_num_rows, int b_num_cols, int dim_shared) {
     __shared__ float a_shared[TILE_SIZE][TILE_SIZE];
-    __shared__ float b_shared[TILE_SIZE][TILE_SIZE];  
+    __shared__ float b_shared[TILE_SIZE][TILE_SIZE];
 
     int c_row = blockIdx.y * TILE_SIZE + threadIdx.y;
     int c_col = blockIdx.x * TILE_SIZE + threadIdx.x;
@@ -13,8 +13,8 @@ __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_
 
     float sum = 0;
 
-    for (int t = 0; t < num_tile_steps; t++) 
-    {   
+    for (int t = 0; t < num_tile_steps; t++)
+    {
         //Determine row/col for A and B
         int a_row = blockIdx.y * TILE_SIZE + threadIdx.y;
         int a_col = TILE_SIZE * t + threadIdx.x;
@@ -29,7 +29,7 @@ __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_
         __syncthreads();
 
         //Dot product of A col and B row;
-        for (int i = 0; i < TILE_SIZE; i++) 
+        for (int i = 0; i < TILE_SIZE; i++)
         {
             sum += a_shared[threadIdx.y][i] * b_shared[i][threadIdx.x];
         }
@@ -47,7 +47,7 @@ std::vector<float> mat_mul_tiled(std::vector<float> a, std::vector<float> b, int
     int b_num_rows = b.size() / b_num_cols;
     if (a_num_cols != b_num_rows) {
         return {};
-    } 
+    }
 
     //Set up device pointers
     float* dev_a;
@@ -70,57 +70,17 @@ std::vector<float> mat_mul_tiled(std::vector<float> a, std::vector<float> b, int
     //Call kernel
     k_mat_mul_tiled<<<grid_dim, block_dim>>>(dev_a,  dev_b, dev_c, a_num_rows, b_num_cols, a_num_cols);
 
-    //Synchronize 
+    //Synchronize
     cudaDeviceSynchronize();
 
     //Copy output matrix back
     std::vector<float> c(a_num_rows * b_num_cols);
     cudaMemcpy(c.data(), dev_c, a_num_rows * b_num_cols * sizeof(float), cudaMemcpyDeviceToHost);
-    
+
     //Free device memory
     cudaFree(dev_a);
     cudaFree(dev_b);
     cudaFree(dev_c);
- 
-    return c;
-}
 
-int main() {
-    int N = 512;
-    
-    std::vector<float> m1(N * N);
-    std::vector<float> m2(N * N);
-    
-    // m1 = identity matrix
-    for (int r = 0; r < N; r++)
-        for (int c = 0; c < N; c++)
-            m1[r * N + c] = (r == c) ? 1.0f : 0.0f;
-  
-    // m2 = fill each element with its column index
-    for (int r = 0; r < N; r++)
-        for (int c = 0; c < N; c++)
-            m2[r * N + c] = (float)c;
-  
-    std::vector<float> result = mat_mul_tiled(m1, m2, N, N);
-  
-    if (result.empty()) {
-        std::cout << "Matrix multiply failed" << std::endl;
-        return 1;
-    }
-  
-    // Identity * m2 should equal m2, so check a few elements
-    bool correct = true;
-    for (int r = 0; r < N; r++)
-        for (int c = 0; c < N; c++)
-            if (result[r * N + c] != (float)c) {
-                correct = false;
-                std::cout << "WRONG at " << r << "," << c 
-                          << " expected " << c 
-                          << " got " << result[r * N + c] << std::endl;
-            }
-  
-    if (correct)
-        std::cout << "All correct!" << std::endl;
-  
-      return 0;
+    return c;
 }
