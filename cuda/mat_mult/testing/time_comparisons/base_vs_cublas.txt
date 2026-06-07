@@ -1,0 +1,37 @@
+Tested Kernel Time: 1.85856 for matrix size 512 with 32 threads.
+Tested cuBLAS Time: 1.89558 for matrix size 512
+Tested Kernel Time: 1.79462 for matrix size 512 with 64 threads.
+Tested cuBLAS Time: 1.87606 for matrix size 512
+Tested Kernel Time: 1.45306 for matrix size 512 with 128 threads.
+Tested cuBLAS Time: 2.31984 for matrix size 512
+Tested Kernel Time: 1.63325 for matrix size 512 with 256 threads.
+Tested cuBLAS Time: 1.86582 for matrix size 512
+Tested Kernel Time: 1.6889 for matrix size 512 with 512 threads.
+Tested cuBLAS Time: 2.08291 for matrix size 512
+Tested Kernel Time: 1.70067 for matrix size 512 with 1024 threads.
+Tested cuBLAS Time: 2.30762 for matrix size 512
+Tested Kernel Time: 13.5986 for matrix size 2048 with 32 threads.
+Tested cuBLAS Time: 7.32134 for matrix size 2048
+Tested Kernel Time: 14.8019 for matrix size 2048 with 64 threads.
+Tested cuBLAS Time: 6.81011 for matrix size 2048
+Tested Kernel Time: 13.746 for matrix size 2048 with 128 threads.
+Tested cuBLAS Time: 6.36653 for matrix size 2048
+Tested Kernel Time: 13.2128 for matrix size 2048 with 256 threads.
+Tested cuBLAS Time: 6.81475 for matrix size 2048
+Tested Kernel Time: 13.59 for matrix size 2048 with 512 threads.
+Tested cuBLAS Time: 6.16336 for matrix size 2048
+Tested Kernel Time: 13.1222 for matrix size 2048 with 1024 threads.
+Tested cuBLAS Time: 6.30886 for matrix size 2048
+Tested Kernel Time: 92.3217 for matrix size 4096 with 32 threads.
+Tested cuBLAS Time: 34.4334 for matrix size 4096
+Tested Kernel Time: 86.9761 for matrix size 4096 with 64 threads.
+Tested cuBLAS Time: 26.0468 for matrix size 4096
+Tested Kernel Time: 78.412 for matrix size 4096 with 128 threads.
+Tested cuBLAS Time: 26.976 for matrix size 4096
+Tested Kernel Time: 81.861 for matrix size 4096 with 256 threads.
+Tested cuBLAS Time: 20.632 for matrix size 4096
+Tested Kernel Time: 80.2459 for matrix size 4096 with 512 threads.
+Tested cuBLAS Time: 25.9943 for matrix size 4096
+Tested Kernel Time: 82.0366 for matrix size 4096 with 1024 threads.
+Tested cuBLAS Time: 24.8269 for matrix size 4096
+

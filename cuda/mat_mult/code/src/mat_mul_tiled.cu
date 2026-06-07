@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 
-#define TILE_SIZE 16
+#define TILE_SIZE 32
 
 __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_num_rows, int b_num_cols, int dim_shared) {
     __shared__ float a_shared[TILE_SIZE][TILE_SIZE];
@@ -41,12 +41,12 @@ __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_
     dev_c[c_row * b_num_cols + c_col] = sum;
 }
 
-std::vector<float> mat_mul_tiled(std::vector<float> a, std::vector<float> b, int a_num_rows, int b_num_cols) {
+void mat_mul_tiled(std::vector<float>& a, std::vector<float>& b, std::vector<float>& c, int a_num_rows, int b_num_cols) {
     //Check matrix dimensions
     int a_num_cols = a.size() / a_num_rows;
     int b_num_rows = b.size() / b_num_cols;
     if (a_num_cols != b_num_rows) {
-        return {};
+        return;
     }
 
     //Set up device pointers
@@ -74,7 +74,6 @@ std::vector<float> mat_mul_tiled(std::vector<float> a, std::vector<float> b, int
     cudaDeviceSynchronize();
 
     //Copy output matrix back
-    std::vector<float> c(a_num_rows * b_num_cols);
     cudaMemcpy(c.data(), dev_c, a_num_rows * b_num_cols * sizeof(float), cudaMemcpyDeviceToHost);
 
     //Free device memory
@@ -82,5 +81,4 @@ std::vector<float> mat_mul_tiled(std::vector<float> a, std::vector<float> b, int
     cudaFree(dev_b);
     cudaFree(dev_c);
 
-    return c;
 }

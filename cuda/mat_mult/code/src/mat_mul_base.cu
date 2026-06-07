@@ -78,3 +78,50 @@ void mat_mul_base(std::vector<float>& m1, std::vector<float>& m2, std::vector<fl
 
 }
 
+void mat_mul_base_test(int num_threads, std::vector<float>& m1, std::vector<float>& m2, std::vector<float>& m3, int row_1, int col_2, int k)
+{
+
+    // Get dimensions
+    int col_1 = m1.size() / row_1;
+    int row_2 = m2.size() / col_2;
+
+    // Return if matrix dimensions incorrect
+    if (m1.size() % row_1 != 0
+    || m2.size() % col_2 != 0
+    || col_1 != row_2)
+    {
+        return;
+    }
+
+    /* Set up pointers */
+    float* dev_m1;
+    float* dev_m2;
+    float* dev_m3;
+
+    /* Allocate memory on device */
+    cudaMalloc((void**)&dev_m1, m1.size() * sizeof(float));
+    cudaMalloc((void**)&dev_m2, m2.size() * sizeof(float));
+    cudaMalloc((void**)&dev_m3, (row_1 * col_2 * sizeof(float)));
+
+    /* Copy to Device */
+    cudaMemcpy(dev_m1, m1.data(), m1.size() * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_m2, m2.data(), m2.size() * sizeof(float), cudaMemcpyHostToDevice);
+
+    /* Call Kernel */
+    // num_threads Should always be some multiple of 32 for warp efficiency
+    int num_blocks = (row_1 * col_2 + num_threads - 1) / num_threads;
+    k_mat_mul_base<<<num_blocks, num_threads>>>(dev_m1, dev_m2, dev_m3, row_1, col_2, col_1);
+
+    /* Wait for Sync */
+    cudaDeviceSynchronize();
+
+    /* Copy from device back to host */
+    cudaMemcpy(m3.data(), dev_m3, row_1 * col_2 * sizeof(float), cudaMemcpyDeviceToHost);
+
+    /* Free device memory */
+    cudaFree(dev_m1);
+    cudaFree(dev_m2);
+    cudaFree(dev_m3);
+
+}
+
