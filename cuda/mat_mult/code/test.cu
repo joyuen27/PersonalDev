@@ -13,6 +13,7 @@ bool check_matrix_equality(int n, int m, std::vector<float>& m1, std::vector<flo
 void nsight_base_test(int num_threads, int matrix_size);
 void test_tiled();
 void test_base_vs_cuBLAS();
+void nsight_tiled_test(int matrix_size);
 
 //Base Testing
 int num_threads[] = {32, 64, 128, 256, 512, 1024};
@@ -28,7 +29,7 @@ cudaEvent_t s, e;
 float test_time, cublas_time;
 
 int main() {
-    test_tiled();
+    nsight_tiled_test(2048);
     return 0;
 }
 
@@ -179,5 +180,15 @@ void nsight_base_test(int num_threads, int matrix_size) {
 
     mat_mul_base_test(num_threads, m1, m2, m3, matrix_size, matrix_size, matrix_size);
 
+}
+
+void nsight_tiled_test(int matrix_size) {
+    std::vector<float> m1(matrix_size * matrix_size);
+    std::vector<float> m2(matrix_size * matrix_size);
+    std::vector<float> m3(matrix_size * matrix_size);
+
+    set_matrix(matrix_size, matrix_size, matrix_size, m1.data(), m2.data());
+
+    mat_mul_tiled(m1, m2, m3, matrix_size, matrix_size);
 
 }

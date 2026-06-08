@@ -57,3 +57,14 @@
 # Phase 2: Tiled Matrix Multiplication
 
 # Setup
+- Benchmarked tiled matrix multiplication kernel vs cuBLAS (Nvidia standard)
+- Testing was done on RTX 5080, CUDA 12.8.
+- Ran 10 runs and took median of all execution times
+
+- Tested matrix sizes: 512 x 512, 2048 x 2048, 4096 x 4096
+- Tested tile sizes: 8, 16, 32
+
+# Observations from Kernel Execution Times
+ - Tile size 8 wins at 512 x 512
+    - Again due the lower overhead of launching my kernel vs cuBLAS
+    - Size 8 wins due 
