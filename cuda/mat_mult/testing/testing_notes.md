@@ -29,7 +29,7 @@
 # Observations from Single Nsight
   Tested Best Performing Configurations from Kernel Execution Times, Single Run
  - 64 threads at 512 x 512
-    - Good L1 Cache Throughput 80%, L2 Cahce Throughput 40% low DRAM throughput 3%
+    - Good L1 Cache Throughput 80%, L2 Cache Throughput 40% low DRAM throughput 3%
         - Likely due to small matrix being able to fit mostly in L1
         - Little pulls from global memory
     - Workload is too small
@@ -43,21 +43,36 @@
         - L2 at 93.75% throughput
             - Since different threads are pulling the same data over and over again
         - 90.6% of cycles waiting on memory
-            - Warps stall 48 cycles per instruction waiting on memory
+            - Warps stall 48 cycles per instruction waiting on memory with 90.6% of cycles waiting on memory
+                - confirms memory access (not compute) is on the critical path.
             - Nsight Recommendation: "Consider moving frequently used data to shared memory"
     - Not compute bound
         - 65% Compute Throughput
+            - SM throughput of 65% sounds healthy until you check FMA pipe utilization at 8% — the SMs are busy issuing loads, not doing math.
         - "The workload achieved 4% of this device's fp32 peak performance"
     - Scheduler Starved
         - 78% of cycles, all warps are stalled waiting on memory
         - Can't just add more threads/warps
 
  - 512 threads at 4096 x 4096
-    - Same notes as above
-        - L2 being slammed 94% throughput
-        - 79% of cycles no eligible warps
+    - Memory Throughput Bottleneck
+        - L2 at 94% throughput
+            - Same cause as 2048: repeated pulls of the same row/col data from L2
+        - ~79% of cycles waiting on memory
+            - Warps stalling on memory accesses
+            - Nsight Recommendation: "Consider moving frequently used data to shared memory"
+    - Not compute bound
+        - ~60% SM Compute Throughput — misleading at face value
+            - SM throughput of 60% sounds healthy until you check FMA pipe utilization at 8% — the SMs are busy issuing loads, not doing math.
         - Most of compute being used for memory operations: 60% pipe utilization on LSU (Load/Store Unit)
+        - See roofline section below: 3% of FP32 peak achieved
+    - Scheduler Starved
+        - 79% of cycles, all warps are stalled waiting on memory
+        - Can't just add more threads/warps
+    - Sufficient workload
+        - Waves/SM = 130
     - 81ms kernel time
+        - This is the configuration profiled in detail in the roofline section below.
    
 <img width="2061" height="1021" alt="image" src="https://github.com/user-attachments/assets/444fd3f7-153a-47d5-b9dd-14ebd1f6f6e5" />
 
@@ -77,7 +92,7 @@ Done with 512 threads at 4096 x 4096, see notes for detailed math
     - L2 Time Floor: 76.3ms <--- this is our bottleneck as its closest to our actual kernel time of 81.02ms
         - Using actual achieved bandwidth -> 81.0 confirms bottleneck is in L2
 
-- Roofline Plot using bottleneck L2:
+- Roofline Plot (L2 as binding constraint):
     - Total FLOPS/s: 1.696 TFLOPs/s
     - Arithmetic Intensity: (1.696 TFLOPs/s) / (3.41 TB/s) = 0.497 FLOPs/byte
  <img width="1739" height="1096" alt="image" src="https://github.com/user-attachments/assets/f88d87ca-d36f-4ead-9db2-d9984d30456b" />
@@ -89,6 +104,9 @@ Done with 512 threads at 4096 x 4096, see notes for detailed math
     - Multiple threads pull the same row/col of data over and over again from L2 cache
     - Fix. Tile computation so one pull can be reused across the whole tile.
 
+
+# Phase 1: Conclusion
+Phase 1 establishes: the naive kernel is L2-bandwidth-bound at 94% of peak L2 BW, achieving 3% of FP32 peak. The remaining ~96% of compute capacity is unreachable without reducing L2 traffic. Phase 2 introduces tiling to do exactly that — load tiles cooperatively into shared memory once per block.
 
 # Phase 2: Tiled Matrix Multiplication
 
