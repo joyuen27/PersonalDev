@@ -15,28 +15,33 @@
  - Execution time around
     - 50% of cuBLAS at 2048 x 2048
     - 25-30% of cuBlas at 4096 x 4096
+ <img width="2541" height="900" alt="image" src="https://github.com/user-attachments/assets/33a1667a-bc8b-4f7a-9403-888688b2ca12" />
+
  - Thread count doesn't really affect executing timing
     - 64+ threads on 2048 x 2048 and 4096 x 4096
         - Only saw around 7-10% variation in times between different thread sizes
         - No one best thread count for all sizes
     - Having more warps per block allows scheduler to switch between to hide latency
         - In this case, all the warps might be waiting for memory, no ready warp to switch to
+     
+<img width="2542" height="900" alt="image" src="https://github.com/user-attachments/assets/7ffd20c5-a519-451c-9395-1a76ba2cd2c2" />
 
 # Observations from Single Nsight
   Tested Best Performing Configurations from Kernel Execution Times, Single Run
-
  - 64 threads at 512 x 512
     - Good L1 Cache Throughput 80%, L2 Cahce Throughput 40% low DRAM throughput 3%
         - Likely due to small matrix being able to fit mostly in L1
         - Little pulls from global memory
     - Workload is too small
-        - Only 30% SM busy
+        - Waves per SM - 2.03, startup + tail at the end accounts for good percentage of the kernel time
+        - Too little steady-state time to benchmark kernel
 
  - 256 threads 2048 x 2048
+    - Workload is enough to benchmark
+        - Waves/SM = 32.51, assuming ramp + tail = 2 waves, have 30 waves of steady state to benchmark
     - Memory Throughput Bottleneck
         - L2 at 93.75% throughput
-            - Since we are pulling the same data over and over again
-                - Ie. Pulling the same col again every time for each multiplication
+            - Since different threads are pulling the same data over and over again
         - 90.6% of cycles waiting on memory
             - Warps stall 48 cycles per instruction waiting on memory
             - Nsight Recommendation: "Consider moving frequently used data to shared memory"
@@ -52,6 +57,9 @@
         - L2 being slammed 94% throughput
         - 79% of cycles no eligible warps
         - Most of compute being used for memory operations: 60% pipe utilization on LSU (Load/Store Unit)
+    - 81ms kernel time
+   
+<img width="2061" height="1021" alt="image" src="https://github.com/user-attachments/assets/444fd3f7-153a-47d5-b9dd-14ebd1f6f6e5" />
 
 # Roofline Analysis
 Done with 512 threads at 4096 x 4096, see notes for detailed math
@@ -72,8 +80,7 @@ Done with 512 threads at 4096 x 4096, see notes for detailed math
 - Roofline Plot using bottleneck L2:
     - Total FLOPS/s: 1.696 TFLOPs/s
     - Arithmetic Intensity: (1.696 TFLOPs/s) / (3.41 TB/s) = 0.497 FLOPs/byte
-    - Graph
-        - 
+ <img width="1739" height="1096" alt="image" src="https://github.com/user-attachments/assets/f88d87ca-d36f-4ead-9db2-d9984d30456b" />
 
 - Takeaway
     - Bottleneck is on pulls from L2 memory as seen from the roofline analysis.
