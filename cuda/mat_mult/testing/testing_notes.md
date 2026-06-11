@@ -53,6 +53,35 @@
         - 79% of cycles no eligible warps
         - Most of compute being used for memory operations: 60% pipe utilization on LSU (Load/Store Unit)
 
+# Roofline Analysis
+Done with 512 threads at 4096 x 4096, see notes for detailed math
+- Throughputs
+    - Compute Throughput: 1.696 TFLOP/s
+        - 3% of Peak FP32
+    - DRAM Memory Throughput: 103.8 GB/s
+        - 10.8% of Peak DRAM BW
+    - L2 Memory Throughput: 3.41 TB/s
+        - 94.2% of Peak L2 BW
+
+- Time Floors (Theoretical times if x is the bottleneck)
+    - Compute Time Floor: 2.45ms
+    - DRAM Time Floor: 8.75ms
+    - L2 Time Floor: 76.3ms <--- this is our bottleneck as its closest to our actual kernel time of 81.02ms
+        - Using actual achieved bandwidth -> 81.0 confirms bottleneck is in L2
+
+- Roofline Plot using bottleneck L2:
+    - Total FLOPS/s: 1.696 TFLOPs/s
+    - Arithmetic Intensity: (1.696 TFLOPs/s) / (3.41 TB/s) = 0.497 FLOPs/byte
+    - Graph
+        - 
+
+- Takeaway
+    - Bottleneck is on pulls from L2 memory as seen from the roofline analysis.
+    - This is due to the fact that the naive kernel is reusing a lot of the same elements when doing matrix multiplications
+    - Ex. Each row x is being multiplied against col 0 ... col y for a element. 
+    - Multiple threads pull the same row/col of data over and over again from L2 cache
+    - Fix. Tile computation so one pull can be reused across the whole tile.
+
 
 # Phase 2: Tiled Matrix Multiplication
 
