@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 
-#define TILE_SIZE 16
+#define TILE_SIZE 32
 
 __global__ void k_mat_mul_tiled(float* dev_a, float* dev_b, float* dev_c, int a_num_rows, int b_num_cols, int dim_shared) {
     __shared__ float a_shared[TILE_SIZE][TILE_SIZE];

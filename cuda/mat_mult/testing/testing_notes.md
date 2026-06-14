@@ -115,10 +115,11 @@ Phase 1 establishes: the naive kernel is L2-bandwidth-bound at 94% of peak L2 BW
 - Testing was done on RTX 5080, CUDA 12.8.
 - Ran 10 runs and took median of all execution times
 
-- Tested matrix sizes: 512 x 512, 2048 x 2048, 4096 x 4096
+- Tested matrix sizes: 2048 x 2048, 4096 x 4096
 - Tested tile sizes: 8, 16, 32
 
 # Observations from Kernel Execution Times
- - Tile size 8 wins at 512 x 512
-    - Again due the lower overhead of launching my kernel vs cuBLAS
-    - Size 8 wins due 
+- Best performing tile size: 16
+    - Balances reuse of tiles and resource occupany
+    - Use nsight to find out more
+- Performance vs cuBLAS ()
