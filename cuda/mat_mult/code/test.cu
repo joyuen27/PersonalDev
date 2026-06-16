@@ -78,12 +78,6 @@ void test_base_vs_cuBLAS() {
     }
     cudaDeviceSynchronize();
 
-    //Warup 
-    for (int w = 0; w < 3; w++) {
-        mat_mul_base_test(num_threads[j], m1, m2, m3_test, n, m, k);
-        mat_mul_cublas(m1, m2, m3_cublas, n, m, k);
-    }
-    cudaDeviceSynchronize();
     cudaEventCreate(&s);
     cudaEventCreate(&e);
     for (int i = 0; i < sizeof(matrix_sizes) / sizeof(int); i++) {
@@ -133,15 +127,11 @@ void test_base_vs_cuBLAS() {
 
 void test_tiled() {
 
-    //warmup cuBLAS
-    for (int n : matrix_sizes) {
-        std::vector<float> w1(n*n), w2(n*n), w3(n*n);
-        mat_mul_cublas(w1, w2, w3, n, n, n);
-    }
-    cudaDeviceSynchronize();
-
     cudaEventCreate(&s);
     cudaEventCreate(&e);
+
+    const int num_warmup = 5;
+
     for (int i = 0; i < sizeof(matrix_sizes) / sizeof(int); i++) {
         int n = matrix_sizes[i];
         int k = matrix_sizes[i];
@@ -157,12 +147,29 @@ void test_tiled() {
         std::vector<float> test_times(num_runs);
         std::vector<float> cublas_times(num_runs);
 
+        // --- warm THIS kernel at THIS size until steady-state ---
+        for (int w = 0; w < num_warmup; w++) {
+            mat_mul_tiled(m1, m2, m3_test, n, m);
+        }
+
+        cudaDeviceSynchronize();
+
         for (int r = 0; r < num_runs; r++) {
             cudaEventRecord(s);
             mat_mul_tiled( m1, m2, m3_test, n, m);
             cudaEventRecord(e);
             cudaEventSynchronize(e);
             cudaEventElapsedTime(&test_times[r], s, e);
+        }
+
+         // --- warm cuBLAS separately, then time it ---
+         for (int w = 0; w < num_warmup; w++) {
+            mat_mul_cublas(m1, m2, m3_cublas, n, m, k);
+        }
+
+        cudaDeviceSynchronize();
+
+        for (int r = 0; r < num_runs; r++) {
 
             cudaEventRecord(s);
             mat_mul_cublas(m1, m2, m3_cublas, n, m, k);

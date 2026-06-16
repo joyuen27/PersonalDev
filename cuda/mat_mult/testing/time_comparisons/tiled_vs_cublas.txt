@@ -1,12 +1,12 @@
-Tested Tiled Kernel Time: 9.78442 for matrix size 2048 with tile size 8.
-Tested cuBLAS Time: 6.60515 for matrix size 2048
-Tested Tiled Kernel Time: 57.9633 for matrix size 4096 with tile size 8.
-Tested cuBLAS Time: 25.4308 for matrix size 4096
-Tested Tiled Kernel Time: 9.54128 for matrix size 2048 with tile size 16.
-Tested cuBLAS Time: 7.19693 for matrix size 2048
-Tested Tiled Kernel Time: 43.0277 for matrix size 4096 with tile size 16.
-Tested cuBLAS Time: 20.6992 for matrix size 4096
-Tested Tiled Kernel Time: 9.26422 for matrix size 2048 with tile size 32.
-Tested cuBLAS Time: 6.94723 for matrix size 2048
-Tested Tiled Kernel Time: 47.0915 for matrix size 4096 with tile size 32.
-Tested cuBLAS Time: 21.141 for matrix size 4096
+Tested Tiled Kernel Time: 10.8332 for matrix size 2048 with tile size 8.
+Tested cuBLAS Time: 7.01024 for matrix size 2048
+Tested Tiled Kernel Time: 56.6959 for matrix size 4096 with tile size 8.
+Tested cuBLAS Time: 25.9308 for matrix size 4096
+Tested Tiled Kernel Time: 10.2354 for matrix size 2048 with tile size 16.
+Tested cuBLAS Time: 7.74093 for matrix size 2048
+Tested Tiled Kernel Time: 50.4519 for matrix size 4096 with tile size 16.
+Tested cuBLAS Time: 27.2901 for matrix size 4096
+Tested Tiled Kernel Time: 9.32496 for matrix size 2048 with tile size 32.
+Tested cuBLAS Time: 7.05318 for matrix size 2048
+Tested Tiled Kernel Time: 51.551 for matrix size 4096 with tile size 32.
+Tested cuBLAS Time: 25.4439 for matrix size 4096
