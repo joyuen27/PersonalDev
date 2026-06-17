@@ -8,7 +8,7 @@
 - Tested matrix sizes: 512 x 512, 2048 x 2048, 4096 x 4096 
 - Tested thread counts: 32, 64, 128, 256, 512, 1024
 
-# Observations from Kernel Execution Times
+# Observations from Kernel Execution Times TODO FIX BEST SIZE AT 1024
  - Kernel actually beats cuBLAS at 512 x 512 matrix
     - Base is more lightweight, less initialization so better at smaller matrixes
     - cuBLAS has some initialization overhead, had to warm it up
@@ -108,18 +108,4 @@ Done with 512 threads at 4096 x 4096, see notes for detailed math
 # Phase 1: Conclusion
 Phase 1 establishes: the naive kernel is L2-bandwidth-bound at 94% of peak L2 BW, achieving 3% of FP32 peak. The remaining ~96% of compute capacity is unreachable without reducing L2 traffic. Phase 2 introduces tiling to do exactly that — load tiles cooperatively into shared memory once per block.
 
-# Phase 2: Tiled Matrix Multiplication
 
-# Setup
-- Benchmarked tiled matrix multiplication kernel vs cuBLAS (Nvidia standard)
-- Testing was done on RTX 5080, CUDA 12.8.
-- Ran 10 runs and took median of all execution times
-
-- Tested matrix sizes: 2048 x 2048, 4096 x 4096
-- Tested tile sizes: 8, 16, 32
-
-# Observations from Kernel Execution Times
-- Best performing tile size: 16
-    - Balances reuse of tiles and resource occupany
-    - Use nsight to find out more
-- Performance vs cuBLAS ()
