@@ -6,18 +6,20 @@
 - Ran 10 runs and took median of all execution times
 
 - Tested matrix sizes: 2048 x 2048, 4096 x 4096
-- Reasoning
-    - Established in naive kernel that workload was too small
-    - TIled kernel should run faster than naive due to the reuse 
-        - This would make the noise from ramp-up and tail tail effects even worse 
+    - Reasoning
+        - Established in naive kernel that workload was too small
+        - TIled kernel should run faster than naive due to the reuse 
+            - This would make the noise from ramp-up and tail tail effects even worse 
 
 - Tested tile sizes: 8, 16, 32
-- Reasoning 
-    - 8x8 -> 64 threads -> 2 warps full, clean for warp efficiency
-    - Above tile size 32 
-        - 64x64 is 4096 threads/block which is greater than the max 1024 threads/block
+    - Reasoning 
+        - 8x8 -> 64 threads -> 2 warps full, clean for warp efficiency
+        - Above tile size 32 
+            - 64x64 is 4096 threads/block which is greater than the max 1024 threads/block
 
 # Observations from Kernel Execution Times
+
+<img width="1181" height="618" alt="image" src="https://github.com/user-attachments/assets/640f8b0b-b3cb-4896-99fd-ac019cccd9cd" />
 
 - 2048 x 2048 matrix multiply
     - Best Performing Tile Size: 32
@@ -26,6 +28,8 @@
 - 4096 x 4096 matrix multiply
     - Best Performing Tile Size: 16
         - Kernel is 2x slower than cuBLAS but 55% faster than naive kernel
+          
+<img width="2223" height="987" alt="image" src="https://github.com/user-attachments/assets/d98302fc-7a35-43cf-a577-2ac45ca87391" />
 
 - Hypothesis:
     - Speedups are due to balance in amount of reuse and number of blocks
