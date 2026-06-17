@@ -9,6 +9,9 @@
 - Tested thread counts: 32, 64, 128, 256, 512, 1024
 
 # Observations from Kernel Execution Times TODO FIX BEST SIZE AT 1024
+
+<img width="1272" height="772" alt="image" src="https://github.com/user-attachments/assets/f6df9667-2f42-41a2-a3c2-3baf46ebcebf" />
+
  - Kernel actually beats cuBLAS at 512 x 512 matrix
     - Base is more lightweight, less initialization so better at smaller matrixes
     - cuBLAS has some initialization overhead, had to warm it up
