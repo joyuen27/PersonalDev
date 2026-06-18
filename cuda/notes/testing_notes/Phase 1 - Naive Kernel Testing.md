@@ -30,7 +30,7 @@
 <img width="2542" height="900" alt="image" src="https://github.com/user-attachments/assets/7ffd20c5-a519-451c-9395-1a76ba2cd2c2" />
 
 # Observations from Single Nsight
-  Tested Best Performing Configurations from Kernel Execution Times, Single Run
+  Tested A Couple Configurations from Kernel Execution Times, Single Run
  - 64 threads at 512 x 512
     - Good L1 Cache Throughput 80%, L2 Cache Throughput 40% low DRAM throughput 3%
         - Likely due to small matrix being able to fit mostly in L1
