@@ -8,7 +8,7 @@
 - Tested matrix sizes: 512 x 512, 2048 x 2048, 4096 x 4096 
 - Tested thread counts: 32, 64, 128, 256, 512, 1024
 
-# Observations from Kernel Execution Times TODO FIX BEST SIZE AT 1024
+# Observations from Kernel Execution Times 
 
 <img width="1272" height="772" alt="image" src="https://github.com/user-attachments/assets/f6df9667-2f42-41a2-a3c2-3baf46ebcebf" />
 

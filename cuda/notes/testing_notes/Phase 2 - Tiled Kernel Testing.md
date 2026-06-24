@@ -51,3 +51,30 @@
             - Memory stalls hurt more since they come from DRAM now
                 - Tile size 32's 1 block/SM hurts a lot more 
                     - No other blocks to switch to for latency hiding
+
+# Observations from Nsight Compute
+
+- 2048 x 2048 matrix mult with tile size 32
+    - Identically high compute AND memory throughput 
+        - Both are being limited by the same bottleneck
+    - High L1 Cache Throughput 
+        - L2 Cache throughput now at 11.42%
+        - Achieved what we wanted as compared to naive kernel
+            - Move memory to be accessed from L1/shared compared to L2
+        - Now L1/shared is the bottleneck
+            - 85% throughput
+            - Average 23.3 cycles being stalled waiting for Mem IO instructions
+                - We are doing two loads per addition
+                    - Queue fills up since we are queueing 2 loads per cycle but LSU can only process 1 load per cycle for FMA
+                - Solutions:
+                    - Need to reduce loads per FMA to prevent queue from filling up
+    - Still 76-79% no eligible warps for scheduling, 30% SM busy
+        - Warps are still waiting on memory, now the memory just comes faster from shared
+        - Same issue as above with the MIO filling up
+            - Because MIO queue filling up -> warps are stalled -> none available 
+    - Tile Size 32 vs 16
+        - Tile Size 16's compute/memory throughput is much higher 96% vs 83.58%
+            - This is because smaller tile -> more blocks/SM -> more latency hiding by switching
+            - However, L2 cache throughput is 2x higher
+                - Smaller tile size means more blocks -> more fetches from global/cached L2 
+
