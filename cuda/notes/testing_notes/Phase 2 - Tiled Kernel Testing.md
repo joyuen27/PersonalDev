@@ -72,9 +72,29 @@
         - Warps are still waiting on memory, now the memory just comes faster from shared
         - Same issue as above with the MIO filling up
             - Because MIO queue filling up -> warps are stalled -> none available 
-    - Tile Size 32 vs 16
-        - Tile Size 16's compute/memory throughput is much higher 96% vs 83.58%
-            - This is because smaller tile -> more blocks/SM -> more latency hiding by switching
-            - However, L2 cache throughput is 2x higher
-                - Smaller tile size means more blocks -> more fetches from global/cached L2 
 
+- 2048 x 2048 Tile Size 32 vs 16
+    - Tile Size 16's compute/memory throughput is much higher 96% vs 83.58%
+        - This is because smaller tile -> more blocks/SM -> more latency hiding by switching
+        - However, L2 cache throughput is 2x higher
+            - Smaller tile size means 2x less reuse-> 2x more fetches from global/cached L2 
+    - Tradeoff between latency hiding and fetches from L2
+
+- 4096 x 4096 matrix mult with tile size 16
+    - Compute and Memory Throughput both at 96.37%
+        - L1 Cache Throughput at 97.24%
+            - This is the LSU pipeline again
+    - SM only busy 35% of time - only 24% of warps eligible every cycle
+        - Same as above cycles are being stalled on MIO instruction queues
+            - "Each warp of this workload spends 26.0 cycles being stalled waiting for the MIO"
+
+- 4096 x 4096 Tile Size 32 vs 16
+    - Again we see that compute/memory throughputs are 15% higher on tile size 16
+        - More latency switching as said before
+    - L2 throughput is 12% higher on tile size 16
+        - Less reuse -> more fetches again from global memory except they land in L2
+    - At bigger matrix sizes like 4096
+        - More total work per SM -> latency hiding matters more
+            - Even though tile size 16 has half the reuse and 2x more pulls from global/L2
+
+# Roofline Analysis
