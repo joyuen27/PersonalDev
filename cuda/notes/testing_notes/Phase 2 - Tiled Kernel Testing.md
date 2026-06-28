@@ -98,3 +98,44 @@
             - Even though tile size 16 has half the reuse and 2x more pulls from global/L2
 
 # Roofline Analysis
+Done with 4096 x 4096 and tile size 16, see notes for more details
+
+- Compute Throughput: 3.12 TFLOPS
+    - 5.6% of peak fp32
+    - Time Floor: 2.45ms
+    - Vs Naive
+
+- L1 Throughput: 10.25 TB/s
+    - 53% of peak BW
+    - Time Floor: 23.1 ms
+    - Vs Naive
+
+- L2 Throughput: 838.6 GB/s
+    - 24.31% of peak BW
+    - Time Floor: 10.7ms
+    - Vs Naive
+
+- DRAM Throughput: 98.6 GB/s
+    - 13.62% of peak BW
+    - Time Floor: 4.52ms
+    - Vs Naive
+
+- Roofline Plot
+
+- Observations
+    - Noticeable gains over naive
+        - Compute throughput: 3.0% → 5.6% of FP32 peak (1.84× higher)
+        - L1/TEX throughput: 66% → 97% (LSU pipe now saturated)
+        - L2 throughput: 94% → 24% (4× drop — bottleneck eliminated)
+        - DRAM throughput: 11% → 14% (roughly unchanged)
+    - L1 throughput is only at 53% of peak BW even though NCU reported 97% L1 cache throughput
+        - Bottleneck is in the LSU unit which is at 97% of peak instructions/cycle
+        - This is also why none of the time floors match up with our runtime of 44ms
+            - Bottleneck isn't in any of the memory/compute throughputs
+    - To further optimize kernel
+        - Reduce LSU instructions per FMA
+            - Drain the MIO queue faster
+
+# Conclusion
+
+The tiled kernel design was effective in improving the L2 bottleneck seen in the naive kernel. By tiling the kernel and maximizing reuse through shared memory we are now hitting faster L1 cache leading to a higher throughput overall. The bottleneck has now shifted to the LSU pipeline where because we are issuing two load instructions to the LSU and the pipeline can only process one load per cycle, we end up filling the queue and waiting on it to empty. The next steps would be to reduce the load-to-FMA ratio in the inner loop.

@@ -82,7 +82,7 @@
 # Roofline Analysis
 Done with 512 threads at 4096 x 4096, see notes for detailed math
 - Throughputs
-    - Compute Throughput: 1.696 TFLOP/s
+    - Compute Throughput: 1.696 TFLOP
         - 3% of Peak FP32
     - DRAM Memory Throughput: 103.8 GB/s
         - 10.8% of Peak DRAM BW
@@ -96,7 +96,7 @@ Done with 512 threads at 4096 x 4096, see notes for detailed math
         - Using actual achieved bandwidth -> 81.0 confirms bottleneck is in L2
 
 - Roofline Plot (L2 as binding constraint):
-    - Total FLOPS/s: 1.696 TFLOPs/s
+    - Total FLOPS/s: 1.696 TFLOPS
     - Arithmetic Intensity: (1.696 TFLOPs/s) / (3.41 TB/s) = 0.497 FLOPs/byte
  <img width="1739" height="1096" alt="image" src="https://github.com/user-attachments/assets/f88d87ca-d36f-4ead-9db2-d9984d30456b" />
 
