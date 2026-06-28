@@ -103,24 +103,20 @@ Done with 4096 x 4096 and tile size 16, see notes for more details
 - Compute Throughput: 3.12 TFLOPS
     - 5.6% of peak fp32
     - Time Floor: 2.45ms
-    - Vs Naive
-
 - L1 Throughput: 10.25 TB/s
     - 53% of peak BW
     - Time Floor: 23.1 ms
-    - Vs Naive
-
 - L2 Throughput: 838.6 GB/s
     - 24.31% of peak BW
     - Time Floor: 10.7ms
-    - Vs Naive
-
 - DRAM Throughput: 98.6 GB/s
     - 13.62% of peak BW
     - Time Floor: 4.52ms
-    - Vs Naive
+  
+<img width="1901" height="1103" alt="image" src="https://github.com/user-attachments/assets/cefbded7-598c-4f98-bd4e-67d8a497c693" />
 
 - Roofline Plot
+<img width="1899" height="1176" alt="image" src="https://github.com/user-attachments/assets/a7dfb652-e514-4a9d-b633-1c4825b67a9c" />
 
 - Observations
     - Noticeable gains over naive
