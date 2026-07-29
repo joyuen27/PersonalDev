@@ -1,3 +1,10 @@
 # Bazel
 /bazel-*
 /MODULE.bazel.lock
+
+# Model weights and tokenized data
+*.bin
+
+# Python
+__pycache__/
+*.pyc
