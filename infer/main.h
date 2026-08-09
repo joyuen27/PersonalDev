@@ -13,8 +13,18 @@ typedef struct {
     int32_t block_size;
 } GPT2Config;
 
-bool load_tokens();
-bool load_model();
+typedef struct {
+    float* ln1_w;
+    float* ln1_b;
+    float* attn_w;
+    float* attn_b;
+    float* proj_w;
+    float* proj_b;
+    float* ln2_w;
+    float* ln2_b;
+} Block;
 
+bool load_tokens();
+bool load_model(Block* blocks);
 
 #endif

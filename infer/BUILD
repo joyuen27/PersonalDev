@@ -6,5 +6,9 @@ cc_binary(
         "main.cpp",
         "main.h",
     ],
-    deps = ["//embedding:embed"],
+    deps = [
+        "//embedding:embed",
+        "//transformer/attention:attention",
+        "//transformer/layer_norm:layer_norm",
+    ],
 )
