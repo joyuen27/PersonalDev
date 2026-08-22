@@ -1,7 +1,7 @@
 from transformers import GPT2LMHeadModel
 from transformers import GPT2Tokenizer
 
-model = GPT2LMHeadModel.from_pretrained("gpt2")
+model = GPT2LMHeadModel.from_pretrained("gpt2-medium")
 sd = model.state_dict()
 cfg = model.config
 

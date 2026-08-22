@@ -4,10 +4,11 @@
 
 #include "attention.h"
 
-float* cpu_attention(float* ln_out,
+void cpu_attention(float* ln_out,
                      float* attn_w, float* attn_b,
                      float* proj_w, float* proj_b,
-                     int32_t n_tokens, int32_t n_embd, int32_t n_head) {
+                     int32_t n_tokens, int32_t n_embd, int32_t n_head,
+                     float* attn_output) {
 
     float* QKV = (float*)malloc(n_tokens * 3 * n_embd * sizeof(float));
 
@@ -75,7 +76,6 @@ float* cpu_attention(float* ln_out,
     }
 
     //Matrix multiply with proj
-    float* attn_output = (float*) malloc(n_tokens * n_embd * sizeof(float));
     for (int t = 0; t < n_tokens; t++) {
         for (int r = 0; r < n_embd; r++) {
             float accum = proj_b[r];
@@ -88,7 +88,5 @@ float* cpu_attention(float* ln_out,
 
     free(heads);
     free(QKV);
-
-    return attn_output;
 
 }

@@ -1,5 +1,6 @@
 #include "include/mat_mul_base.h"
 #include "include/mat_mul_tiled.h"
+#include "include/mat_mul_regtile.h"
 #include "include/mat_mul_cublas.h"
 #include "include/mat_mul_tensor.h"
 
@@ -12,6 +13,7 @@ void set_matrix(int n, int m, int k, float* m1, float* m2);
 bool check_matrix_equality(int n, int m, std::vector<float>& m1, std::vector<float>& m2);
 void nsight_base_test(int num_threads, int matrix_size);
 void test_tiled();
+void test_regtile();
 void test_base_vs_cuBLAS();
 void nsight_tiled_test(int matrix_size);
 
@@ -30,7 +32,7 @@ cudaEvent_t s, e;
 float test_time, cublas_time;
 
 int main() {
-    test_tiled();
+    test_regtile();
     return 0;
 }
 
@@ -188,6 +190,73 @@ void test_tiled() {
         std::cout << " Tested Tiled Kernel Time: " << test_time << " for matrix size " << matrix_sizes[i] << " with tile size 32." << std::endl;
         std::cout << " Tested cuBLAS Time: " << cublas_time << " for matrix size " << matrix_sizes[i] << std::endl;
     
+    }
+    cudaEventDestroy(s);
+    cudaEventDestroy(e);
+}
+
+void test_regtile() {
+
+    cudaEventCreate(&s);
+    cudaEventCreate(&e);
+
+    const int num_warmup = 5;
+
+    for (int i = 0; i < sizeof(matrix_sizes) / sizeof(int); i++) {
+        int n = matrix_sizes[i];
+        int k = matrix_sizes[i];
+        int m = matrix_sizes[i];
+
+        std::vector<float> m1(n * k);
+        std::vector<float> m2(k * m);
+        std::vector<float> m3_test(n * m);
+        std::vector<float> m3_cublas(n * m);
+
+        set_matrix(n, m, k, m1.data(), m2.data());
+
+        std::vector<float> test_times(num_runs);
+        std::vector<float> cublas_times(num_runs);
+
+        // --- warm THIS kernel at THIS size until steady-state ---
+        for (int w = 0; w < num_warmup; w++) {
+            mat_mul_regtile(m1, m2, m3_test, n, m);
+        }
+
+        cudaDeviceSynchronize();
+
+        for (int r = 0; r < num_runs; r++) {
+            cudaEventRecord(s);
+            mat_mul_regtile(m1, m2, m3_test, n, m);
+            cudaEventRecord(e);
+            cudaEventSynchronize(e);
+            cudaEventElapsedTime(&test_times[r], s, e);
+        }
+
+        // --- warm cuBLAS separately, then time it ---
+        for (int w = 0; w < num_warmup; w++) {
+            mat_mul_cublas(m1, m2, m3_cublas, n, m, k);
+        }
+
+        cudaDeviceSynchronize();
+
+        for (int r = 0; r < num_runs; r++) {
+            cudaEventRecord(s);
+            mat_mul_cublas(m1, m2, m3_cublas, n, m, k);
+            cudaEventRecord(e);
+            cudaEventSynchronize(e);
+            cudaEventElapsedTime(&cublas_times[r], s, e);
+        }
+
+        check_matrix_equality(n, k, m3_test, m3_cublas);
+
+        std::sort(test_times.begin(), test_times.end());
+        std::sort(cublas_times.begin(), cublas_times.end());
+        test_time = test_times[num_runs / 2];      // median
+        cublas_time = cublas_times[num_runs / 2];
+
+        std::cout << " Tested Regtile Kernel Time: " << test_time << " for matrix size " << matrix_sizes[i]
+                  << " with tile size " << 16 << " and reg tile size " << 8 << "." << std::endl;
+        std::cout << " Tested cuBLAS Time: " << cublas_time << " for matrix size " << matrix_sizes[i] << std::endl;
     }
     cudaEventDestroy(s);
     cudaEventDestroy(e);

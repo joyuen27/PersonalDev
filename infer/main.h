@@ -22,9 +22,14 @@ typedef struct {
     float* proj_b;
     float* ln2_w;
     float* ln2_b;
+    float* mlp_fc_w;
+    float* mlp_fc_b;
+    float* mlp_proj_w;
+    float* mlp_proj_b;
 } Block;
 
 bool load_tokens();
-bool load_model(Block* blocks);
+bool load_model();
+bool load_vocab();
 
 #endif

@@ -9,4 +9,9 @@ void cpu_embed(float* V_embd,
                float* wte, float* wpe,
                int32_t n_embd);
 
+void cpu_unembed(float* t_embd,
+                 int32_t vocab_size, int32_t n_embd,
+                 float* wte,
+                 float* scores);
+
 #endif
