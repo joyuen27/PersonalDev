@@ -1,6 +1,7 @@
 #include "include/mat_mul_base.h"
 #include "include/mat_mul_tiled.h"
 #include "include/mat_mul_regtile.h"
+#include "include/mat_mul_float4.h"
 #include "include/mat_mul_cublas.h"
 
 #include <vector>
@@ -218,14 +219,14 @@ void test_regtile() {
 
         // --- warm THIS kernel at THIS size until steady-state ---
         for (int w = 0; w < num_warmup; w++) {
-            mat_mul_regtile(m1, m2, m3_test, n, m);
+            mat_mul_float4(m1, m2, m3_test, n, m);
         }
 
         cudaDeviceSynchronize();
 
         for (int r = 0; r < num_runs; r++) {
             cudaEventRecord(s);
-            mat_mul_regtile(m1, m2, m3_test, n, m);
+            mat_mul_float4(m1, m2, m3_test, n, m);
             cudaEventRecord(e);
             cudaEventSynchronize(e);
             cudaEventElapsedTime(&test_times[r], s, e);

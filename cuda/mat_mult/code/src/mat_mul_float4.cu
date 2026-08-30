@@ -5,7 +5,7 @@
 #define REG_TILE_SIZE 8
 
 __global__ void k_mat_mul_float4(float* dev_a, float* dev_b, float* dev_c, int a_num_rows, int b_num_cols, int dim_shared) {
-    __shared__ float a_shared[TILE_SIZE * REG_TILE_SIZE][TILE_SIZE];
+    __shared__ float a_shared[TILE_SIZE][TILE_SIZE * REG_TILE_SIZE]; // Transposed so we can get register tile in contiguous memory
     __shared__ float b_shared[TILE_SIZE][TILE_SIZE * REG_TILE_SIZE];
 
     int c_row = (blockIdx.y * TILE_SIZE + threadIdx.y) * REG_TILE_SIZE;
@@ -25,7 +25,7 @@ __global__ void k_mat_mul_float4(float* dev_a, float* dev_b, float* dev_c, int a
 
         //Pull global memory into shared
         for (int i = 0; i < REG_TILE_SIZE; i++) {
-            a_shared[threadIdx.y * REG_TILE_SIZE + i][threadIdx.x] = dev_a[(a_row + i) * dim_shared + a_col];
+            a_shared[threadIdx.x][threadIdx.y * REG_TILE_SIZE + i] = dev_a[(a_row + i) * dim_shared + a_col];
             b_shared[threadIdx.y][threadIdx.x * REG_TILE_SIZE + i] = dev_b[b_row * b_num_cols + b_col + i];
         }
 
@@ -37,9 +37,9 @@ __global__ void k_mat_mul_float4(float* dev_a, float* dev_b, float* dev_c, int a
             float a_reg[REG_TILE_SIZE];
             float b_reg[REG_TILE_SIZE];
 
-            for (int j = 0; j < REG_TILE_SIZE; j++) 
+            for (int j = 0; j < REG_TILE_SIZE; j += 4) 
             {
-                a_reg[j] = a_shared[threadIdx.y * REG_TILE_SIZE + j][i];
+                *reinterpret_cast<float4*> (&a_reg[j]) = *reinterpret_cast<float4*> (&a_shared[i][threadIdx.y * REG_TILE_SIZE + j]);
                 *reinterpret_cast<float4*> (&b_reg[j]) = *reinterpret_cast<float4*> (&b_shared[i][threadIdx.x * REG_TILE_SIZE + j]);
             }
 
@@ -89,7 +89,7 @@ void mat_mul_float4(std::vector<float>& a, std::vector<float>& b, std::vector<fl
     dim3 grid_dim((b_num_cols + TILE_SIZE * REG_TILE_SIZE - 1)/ (TILE_SIZE * REG_TILE_SIZE), (a_num_rows + TILE_SIZE * REG_TILE_SIZE - 1) / (TILE_SIZE * REG_TILE_SIZE));
 
     //Call kernel
-    k_mat_mul_regtile<<<grid_dim, block_dim>>>(dev_a,  dev_b, dev_c, a_num_rows, b_num_cols, a_num_cols);
+    k_mat_mul_float4<<<grid_dim, block_dim>>>(dev_a,  dev_b, dev_c, a_num_rows, b_num_cols, a_num_cols);
 
     //Synchronize
     cudaDeviceSynchronize();
