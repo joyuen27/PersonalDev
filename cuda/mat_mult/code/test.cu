@@ -2,7 +2,6 @@
 #include "include/mat_mul_tiled.h"
 #include "include/mat_mul_regtile.h"
 #include "include/mat_mul_cublas.h"
-#include "include/mat_mul_tensor.h"
 
 #include <vector>
 #include <iostream>

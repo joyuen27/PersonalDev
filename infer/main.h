@@ -32,4 +32,7 @@ bool load_tokens();
 bool load_model();
 bool load_vocab();
 
+void generate();     // old engine (no KV cache)
+void generate_kv();  // KV-cached engine
+
 #endif
